@@ -12,8 +12,8 @@ using PustokBackTask.DAL;
 namespace PustokBackTask.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230506132011_AllTablesCreated")]
-    partial class AllTablesCreated
+    [Migration("20230509135143_AllDBstructureCreated")]
+    partial class AllDBstructureCreated
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,21 +24,6 @@ namespace PustokBackTask.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("BookImageImage", b =>
-                {
-                    b.Property<int>("BookImagesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImagesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BookImagesId", "ImagesId");
-
-                    b.HasIndex("ImagesId");
-
-                    b.ToTable("BookImageImage");
-                });
-
             modelBuilder.Entity("PustokBackTask.Models.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -47,17 +32,12 @@ namespace PustokBackTask.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("AuthorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.ToTable("Authors");
                 });
@@ -124,7 +104,7 @@ namespace PustokBackTask.Migrations
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ImageId")
+                    b.Property<string>("ImageName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -140,23 +120,15 @@ namespace PustokBackTask.Migrations
 
             modelBuilder.Entity("PustokBackTask.Models.BookTag", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("TagId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("TagId", "BookId");
 
                     b.HasIndex("BookId");
-
-                    b.HasIndex("TagId");
 
                     b.ToTable("BookTags");
                 });
@@ -204,21 +176,20 @@ namespace PustokBackTask.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("PustokBackTask.Models.Image", b =>
+            modelBuilder.Entity("PustokBackTask.Models.Setting", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Key")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Key");
 
-                    b.ToTable("Images");
+                    b.ToTable("Settings");
                 });
 
             modelBuilder.Entity("PustokBackTask.Models.Slider", b =>
@@ -234,6 +205,10 @@ namespace PustokBackTask.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Header")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeaderThenbr")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -267,32 +242,10 @@ namespace PustokBackTask.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BookImageImage", b =>
-                {
-                    b.HasOne("PustokBackTask.Models.BookImage", null)
-                        .WithMany()
-                        .HasForeignKey("BookImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PustokBackTask.Models.Image", null)
-                        .WithMany()
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PustokBackTask.Models.Author", b =>
-                {
-                    b.HasOne("PustokBackTask.Models.Author", null)
-                        .WithMany("Authors")
-                        .HasForeignKey("AuthorId");
-                });
-
             modelBuilder.Entity("PustokBackTask.Models.Book", b =>
                 {
                     b.HasOne("PustokBackTask.Models.Author", "Author")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -340,7 +293,7 @@ namespace PustokBackTask.Migrations
 
             modelBuilder.Entity("PustokBackTask.Models.Author", b =>
                 {
-                    b.Navigation("Authors");
+                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("PustokBackTask.Models.Book", b =>

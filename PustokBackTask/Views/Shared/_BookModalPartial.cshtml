@@ -12,7 +12,13 @@
             </div>
             <div class="col-lg-7 mt--30 mt-lg--30">
                 <div class="product-details-info pl-lg--30 ">
-                    <p class="tag-block">Tags: <a href="#">Movado</a>, <a href="#">Omega</a></p>
+                    <p class="tag-block">Tags:  
+                        @foreach (var item in Model.BookTags)
+                        {
+                            <a href="#">@item.Tag.Name </a>
+                            @(Model.BookTags.Last().TagId == item.TagId ? "" : ",")
+                        }
+                    </p>
                     <h3 class="product-title">@Model.Name</h3>
                     <ul class="list-unstyled">
                       

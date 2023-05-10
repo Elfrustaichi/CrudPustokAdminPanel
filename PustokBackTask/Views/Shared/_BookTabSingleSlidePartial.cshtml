@@ -22,8 +22,7 @@
                     </a>
                     <h3>
                         <a href="product-details.html">
-                            Rpple iPad with Retina Display
-                            MD510LL/A
+                            @item.Name
                         </a>
                     </h3>
                 </div>
@@ -35,7 +34,7 @@
                                 <img src="~/image/products/@item.BookImages.FirstOrDefault(x=>x.PosterStatus==false)?.ImageName" alt="">
                             </a>
                             <div class="hover-btns">
-                                <a href="cart.html" class="single-btn">
+                                <a asp-action="AddToBasket" asp-controller="book" asp-route-id="@item.Id" class="single-btn single-basket-button">
                                     <i class="fas fa-shopping-basket"></i>
                                 </a>
                                 <a href="wishlist.html" class="single-btn">
@@ -56,7 +55,7 @@
                         {
                             <span class="price">£@((item.SalePrice * (100 - item.DiscountPercent) / 100).ToString("0.00"))</span>
                             <del class="price-old">£@item.SalePrice.ToString("0.00")</del>
-                            <span class="price-discount">@item.DiscountPercent%</span>
+                            <span class="price-discount">@item.DiscountPercent.ToString("#.##")%</span>
                         }
                         else
                         {

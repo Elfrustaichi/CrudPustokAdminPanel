@@ -9,6 +9,6 @@ namespace PustokBackTask.Models
         [MaxLength(20)]
         public string FullName { get; set; }
 
-        public List<Author> Authors { get; set; }
+        public List<Book> Books { get; set; }
     }
 }

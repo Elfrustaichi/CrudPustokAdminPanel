@@ -26,5 +26,16 @@ namespace PustokBackTask.DAL
 
         public DbSet<BookTag> BookTags { get; set; }
 
+        public DbSet<Setting> Settings { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<BookTag>().HasKey(x => new { x.TagId, x.BookId });
+
+            modelBuilder.Entity<Setting>().HasKey(x => x.Key);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }
