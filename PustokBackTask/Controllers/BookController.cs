@@ -29,12 +29,12 @@ namespace PustokBackTask.Controllers
 
         public IActionResult AddToBasket(int id) 
         {
-            List<BasketViewModel> BasketItems= new List<BasketViewModel>();
-            BasketViewModel CookieItem;
+            List<BasketCookieViewModel> BasketItems= new List<BasketCookieViewModel>();
+            BasketCookieViewModel CookieItem;
             var basketString = Request.Cookies["basket"];
             if (basketString != null)
             {
-                BasketItems = JsonConvert.DeserializeObject<List<BasketViewModel>>(basketString);
+                BasketItems = JsonConvert.DeserializeObject<List<BasketCookieViewModel>>(basketString);
 
                 CookieItem = BasketItems.FirstOrDefault(x=>x.BookId==id);
 
@@ -44,36 +44,67 @@ namespace PustokBackTask.Controllers
                 }
                 else
                 {
-                    CookieItem = new BasketViewModel { BookId=id,BookCount=1};
+                    CookieItem = new BasketCookieViewModel { BookId=id,BookCount=1};
                     BasketItems.Add(CookieItem);
                 }
             }
             else
             {
-                CookieItem = new BasketViewModel{BookId = id, BookCount = 1 };
+                CookieItem = new BasketCookieViewModel{BookId = id, BookCount = 1 };
                 BasketItems.Add(CookieItem);
             }
 
 
             Response.Cookies.Append("Basket", JsonConvert.SerializeObject(BasketItems));
-            return Json(new {basket=BasketItems });
+
+            BasketViewModel bv = new BasketViewModel();
+            foreach (var ci in BasketItems)
+            {
+                BasketItemViewModel bi = new BasketItemViewModel()
+                {
+                    Count = ci.BookCount,
+                    Book = _context.Books.Include(x => x.BookImages).FirstOrDefault(x => x.Id == ci.BookId)
+                };
+                bv.BasketItems.Add(bi);
+                bv.TotalPrice += (bi.Book.DiscountPercent > 0 ? (bi.Book.SalePrice * (100 - bi.Book.DiscountPercent) / 100) : bi.Book.SalePrice) * bi.Count;
+            }
+            return PartialView("_BasketItemPartialView",bv);
         }
 
        public IActionResult RemoveItemFromBasket(int id)
         {
-           var basket= new List<BasketViewModel>();
+            var basketStr = Request.Cookies["basket"];
+            if (basketStr == null)
+                return StatusCode(404);
 
-            var cookiebasket = Request.Cookies["basket"];
-            if (cookiebasket != null)
+            List<BasketCookieViewModel> cookieItems = JsonConvert.DeserializeObject<List<BasketCookieViewModel>>(basketStr);
+
+            BasketCookieViewModel item = cookieItems.FirstOrDefault(x => x.BookId == id);
+
+            if (item == null)
+                return StatusCode(404);
+
+            if (item.BookCount > 1)
+                item.BookCount--;
+            else
+                cookieItems.Remove(item);
+
+            Response.Cookies.Append("basket", JsonConvert.SerializeObject(cookieItems));
+
+            BasketViewModel bv = new BasketViewModel();
+            foreach (var ci in cookieItems)
             {
-                basket= JsonConvert.DeserializeObject<List<BasketViewModel>>(cookiebasket);
-                var updatedbasket=basket?.Where(x=>x.BookId!=id).ToList();
-                basket = updatedbasket;
-                Response.Cookies.Append("basket",JsonConvert.SerializeObject(basket));
+                BasketItemViewModel bi = new BasketItemViewModel
+                {
+                    Count = ci.BookCount,
+                    Book = _context.Books.Include(x => x.BookImages).FirstOrDefault(x => x.Id == ci.BookId)
+                };
+                bv.BasketItems.Add(bi);
+                bv.TotalPrice += (bi.Book.DiscountPercent > 0 ? (bi.Book.SalePrice * (100 - bi.Book.DiscountPercent) / 100) : bi.Book.SalePrice) * bi.Count;
             }
-           return Json(new {basket=basket});
 
-            
+            return PartialView("_BasketItemPartialView", bv);
+
         }
     }
 }

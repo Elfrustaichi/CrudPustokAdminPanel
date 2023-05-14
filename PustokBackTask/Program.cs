@@ -15,6 +15,7 @@ builder.Services.AddDbContext<DataContext>(opt =>
 
 builder.Services.AddScoped<LayoutService>();
 
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
@@ -30,8 +31,18 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();

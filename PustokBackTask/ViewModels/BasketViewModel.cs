@@ -1,11 +1,9 @@
-﻿using PustokBackTask.Models;
-
-namespace PustokBackTask.ViewModels
+﻿namespace PustokBackTask.ViewModels
 {
     public class BasketViewModel
     {
-        public int BookId { get; set; }
+        public List<BasketItemViewModel> BasketItems { get; set; }=new List<BasketItemViewModel>();
 
-        public int BookCount { get; set; }  
+        public decimal TotalPrice { get; set; }
     }
 }

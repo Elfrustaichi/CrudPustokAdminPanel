@@ -20,33 +20,33 @@
    
 })
 
-const shopBtn = querySelector(".single-basket-button");
-const carttotal = querySelector(".cart-total .text-number");
-
-shopBtn.addEventListener("click",(e) => {
+$(document).on("click", ".single-basket-button", function (e) {
     e.preventDefault();
-    alert("dsadas")
-    let url = e.target.getAttribute("href");
-
+    let url = $(this).attr("href");
     fetch(url)
         .then(response => {
-            if (response.ok) {
-                return response.json()
+            if (!response.ok) {
+                alert("xeta bas verdi")
             }
-            else {
-                alert("xeta bas verdi!")
-            }
+            return response.text()
         })
         .then(data => {
-            let bookcount = JSON.parse(data);
-            carttotal.innerHTML += bookcount;
-            
+            $(".cart-block").html(data)
         })
 })
 
-$(document).on("click", ".single-basket-button", function (e) {
+$(document).on("click", ".removefrombasket", function (e) {
     e.preventDefault();
-
-    
-
+    let url = $(this).attr("href");
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                alert("xeta bas verdi")
+                return
+            }
+            return response.text()
+        })
+        .then(data => {
+            $(".cart-block").html(data)
+        })
 })
