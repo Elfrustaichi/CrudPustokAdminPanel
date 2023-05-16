@@ -1,6 +1,6 @@
 ﻿@model PaginatedList<Feature>
 @{
-    int order = 0;
+    int order = (Model.PageIndex - 1) * Model.Items.Count();
     int pageshow = 5;
 }
 
@@ -42,7 +42,7 @@
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
                 <li class="page-item @(Model.HasPrev?"":"disabled")">
-                    <a class="page-link" asp-action="index" asp-route-page="@Model.PageIndex-1" tabindex="-1">Previous</a>
+                    <a class="page-link" asp-action="index" asp-route-page="@(Model.PageIndex-1)" asp-route-search="@ViewBag.Search">Previous</a>
                 </li>
                 @if (Model.TotalPage > 5)
                 {
@@ -88,7 +88,7 @@
 
 
                 <li class="page-item @(Model.HasNext?"":"disabled")">
-                    <a class="page-link" asp-action="index" asp-route-page="@Model.PageIndex+1" asp-route-search="@ViewBag.Search">Next</a>
+                    <a class="page-link" asp-action="index" asp-route-page="@(Model.PageIndex+1)" asp-route-search="@ViewBag.Search">Next</a>
                 </li>
             </ul>
         </nav>

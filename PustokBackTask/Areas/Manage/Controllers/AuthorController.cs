@@ -41,5 +41,48 @@ namespace PustokBackTask.Areas.Manage.Controllers
 
             return RedirectToAction("index");
         }
+
+       
+
+        public IActionResult Edit(int id)
+        {
+            Genre genre = _context.Genres.Find(id);
+
+            return View(genre);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Author author)
+        {
+
+            Author ExistAuthor = _context.Authors.Find(author.Id);
+
+            ExistAuthor.FullName = author.FullName;
+
+            _context.SaveChanges();
+            return RedirectToAction("index");
+
+        }
+
+        public IActionResult Delete(int id)
+        {
+            Author author = _context.Authors.Include(x => x.Books).FirstOrDefault(x => x.Id == id);
+
+
+            return View(author);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Author author)
+        {
+            Author ExistAuthor = _context.Authors.Find(author.Id);
+
+            
+
+            _context.Authors.Remove(ExistAuthor);
+            _context.SaveChanges();
+
+            return RedirectToAction("index");
+        }
     }
 }
